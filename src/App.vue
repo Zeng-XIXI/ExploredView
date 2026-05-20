@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import {ref, onMounted, getCurrentInstance} from 'vue'
 import { useVideoUpload } from './composables/useVideoUpload'
 import { useVideoFrames } from './composables/useVideoFrames'
 import ExtractControls from './components/ExtractControls.vue'
@@ -11,7 +11,36 @@ const { frames, extracting, extractProgress, extract } = useVideoFrames()
 const videoEl = ref<HTMLVideoElement | null>(null)
 const fps = ref(1)
 
+if (import.meta.env.DEV) {
+  // 挂载当前完整组件实例，自定义全局变量名避免冲突
+  window.__VUE_INSTANCE__ = getCurrentInstance()
+}
+
+// 页面加载后，自动加载演示视频
+onMounted(async () => {
+  console.log("start")
+  // 这里填写你的演示视频路径（public 目录下的直接路径）
+  try {
+    // 1. 你的默认视频路径（public 目录下）
+    const defaultVideoUrl = 'public/video/example.mp4'
+
+    // 2. 下载视频 → 转成 Blob → 转成 File
+    const response = await fetch(defaultVideoUrl)
+    const blob = await response.blob()
+    const file = new File([blob], 'example.mp4', { type: blob.type })
+
+    // 3. 直接调用你原来的 upload 方法！
+    upload(file)
+  } catch (err) {
+    console.error('加载默认视频失败', err)
+  }
+
+
+
+})
+
 function handleFileChange(event: Event) {
+  console.log("上传按钮",event)
   const file = (event.target as HTMLInputElement).files?.[0]
   if (file) upload(file)
 }
@@ -26,7 +55,7 @@ async function handleExtract() {
 <template>
   <div class="app">
     <header>
-      <h1>Video Frame Analyzer</h1>
+      <h1>爆炸视图全景快播</h1>
     </header>
 
     <section class="upload-area">
@@ -39,18 +68,18 @@ async function handleExtract() {
 
     <section v-if="videoSrc" class="video-section">
       <video
-        ref="videoEl"
-        :src="videoSrc"
-        controls
-        preload="auto"
-        class="video-preview"
+          ref="videoEl"
+          :src="videoSrc"
+          controls
+          preload="auto"
+          class="video-preview"
       ></video>
 
       <ExtractControls
-        :extracting="extracting"
-        :fps="fps"
-        @extract="handleExtract"
-        @update:fps="fps = $event"
+          :extracting="extracting"
+          :fps="fps"
+          @extract="handleExtract"
+          @update:fps="fps = $event"
       />
 
       <div v-if="extracting" class="progress-bar-wrapper">
