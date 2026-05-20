@@ -1,20 +1,20 @@
 <template>
   <div class="carousel-box">
-    <!-- 速度配置输入区 -->
+    <!-- 速度配置 -->
     <div class="speed-setting">
       <div class="speed-item">
-        <label>按住快进速度(ms)：</label>
-        <input v-model.number="downSpeed" type="number" min="10" placeholder="数值越小越快">
+        <label>按住快进速度 (ms)</label>
+        <input v-model.number="downSpeed" type="number" min="10" />
       </div>
       <div class="speed-item">
-        <label>松手回退速度(ms)：</label>
-        <input v-model.number="upSpeed" type="number" min="50" placeholder="数值越小越快">
+        <label>松手回退速度 (ms)</label>
+        <input v-model.number="upSpeed" type="number" min="50" />
       </div>
     </div>
 
-    <!-- 轮播容器 -->
+    <!-- 轮播主体（全屏自适应、大图展示） -->
     <div class="img-wrap" @mousedown="handleDown" @mouseup="handleUp" @mouseleave="handleUp">
-      <img :src="currentImg" alt="图片轮播" class="show-img" />
+      <img :src="currentImg" alt="轮播" class="show-img" />
     </div>
   </div>
 </template>
@@ -22,26 +22,22 @@
 <script setup lang="ts">
 import { ref, onUnmounted, watch } from 'vue'
 
-// 接收外部传入图片列表
 const props = defineProps<{
   imgList: string[]
 }>()
 
 const currentIndex = ref(0)
 const currentImg = ref('')
-
-// 用户可自定义速度 默认值
-const downSpeed = ref(80)   // 按住切换间隔
-const upSpeed = ref(150)    // 松手回退间隔
+const downSpeed = ref(80)
+const upSpeed = ref(150)
 
 let downTimer: number | null = null
 let upTimer: number | null = null
 
-// 监听图片列表变化自动重置
 watch(
     () => props.imgList,
     (val) => {
-      if (val && val.length > 0) {
+      if (val?.length) {
         currentIndex.value = 0
         currentImg.value = val[0]
       }
@@ -49,7 +45,6 @@ watch(
     { immediate: true }
 )
 
-// 按住快速向后轮播
 const handleDown = () => {
   clearAllTimer()
   downTimer = window.setInterval(() => {
@@ -60,7 +55,6 @@ const handleDown = () => {
   }, downSpeed.value)
 }
 
-// 松手/移出 缓慢退回第一张
 const handleUp = () => {
   clearAllTimer()
   upTimer = window.setInterval(() => {
@@ -73,52 +67,74 @@ const handleUp = () => {
   }, upSpeed.value)
 }
 
-// 清空定时器
 const clearAllTimer = () => {
   if (downTimer) clearInterval(downTimer)
   if (upTimer) clearInterval(upTimer)
 }
 
-// 组件销毁清除
-onUnmounted(() => {
-  clearAllTimer()
-})
+onUnmounted(clearAllTimer)
 </script>
 
 <style scoped>
 .carousel-box {
-  margin: 16px 0;
-}
-.speed-setting {
+  width: 100%;
+  margin: 24px 0;
   display: flex;
-  gap: 20px;
-  margin-bottom: 12px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.speed-setting {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  gap: 22px;
+  margin-bottom: 16px;
+  justify-content: center;
   flex-wrap: wrap;
 }
+
+.speed-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .speed-item label {
   font-size: 14px;
-  color: #666;
-  margin-right: 6px;
+  color: #444;
 }
+
 .speed-item input {
-  width: 80px;
-  padding: 4px 6px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  width: 90px;
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
   outline: none;
+  font-size: 14px;
 }
+
+/* -------- 核心：大图轮播区域 -------- */
 .img-wrap {
-  width: 400px;
-  height: 260px;
-  overflow: hidden;
-  border-radius: 8px;
+  width: 95%;
+  max-width: 900px;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: grab;
-  user-select: none;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
 }
+
 .show-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  /* 关键：保持图片原始比例，不拉伸 */
+  object-fit: contain;
   display: block;
 }
 </style>

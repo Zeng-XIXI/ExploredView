@@ -67,7 +67,7 @@ const downloadAllAsZip = async () => {
 <template>
   <section class="frames-section">
     <h2>共抽取 {{ frames.length }} 帧</h2>
-
+    <ImgCarousel v-if="imgList.length > 0" :img-list="imgList" />
     <!-- 一键打包下载按钮 -->
     <button
         v-if="frames.length > 0"
@@ -78,7 +78,7 @@ const downloadAllAsZip = async () => {
     </button>
 
     <!-- 👇 图片轮播（自动使用当前生成的帧） -->
-    <ImgCarousel v-if="imgList.length > 0" :img-list="imgList" />
+
 
     <!-- 帧列表 -->
     <div class="frames-grid">
