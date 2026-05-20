@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>按压轮播 松手回退</title>
+<style>
+    .img-box {
+        width: 400px;
+        height: 260px;
+        margin: 50px auto;
+        overflow: hidden;
+        border-radius: 8px;
+        cursor: grab;
+    }
+    .img-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+</style>
+</head>
+<body>
+
+<div class="img-box" id="wrap">
+    <img id="showImg" src="https://picsum.photos/id/10/400/260" alt="">
+</div>
+
+<script>
+// 图片数组 自行替换地址
+const imgList = [
+    "https://picsum.photos/id/10/400/260",
+    "https://picsum.photos/id/11/400/260",
+    "https://picsum.photos/id/12/400/260",
+    "https://picsum.photos/id/13/400/260",
+    "https://picsum.photos/id/14/400/260"
+]
+
+const wrap = document.getElementById('wrap')
+const showImg = document.getElementById('showImg')
+let nowIndex = 0
+let downTimer = null   // 按住快进定时器
+let upTimer = null     // 松手回退定时器
+
+// 按住：快速往后轮图
+wrap.addEventListener('mousedown', () => {
+    clearInterval(downTimer)
+    clearInterval(upTimer)
+    downTimer = setInterval(() => {
+        nowIndex++
+        if(nowIndex >= imgList.length) nowIndex = imgList.length - 1
+        showImg.src = imgList[nowIndex]
+    }, 80) // 数值越小切换越快
+})
+
+// 松开/移出：慢慢往回退到第一张
+function backToFirst(){
+    clearInterval(downTimer)
+    clearInterval(upTimer)
+    upTimer = setInterval(() => {
+        if(nowIndex > 0){
+            nowIndex--
+            showImg.src = imgList[nowIndex]
+        }else{
+            clearInterval(upTimer)
+        }
+    }, 150) // 回退速度
+}
+
+wrap.addEventListener('mouseup', backToFirst)
+wrap.addEventListener('mouseleave', backToFirst)
+</script>
+</body>
+</html>

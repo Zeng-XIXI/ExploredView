@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>按住持续动效 松手回弹</title>
+<style>
+.box{
+  width: 180px;
+  height: 180px;
+  background: #409eff;
+  border-radius: 12px;
+  margin: 100px auto;
+  transition: all 0.4s ease-out; /* 松手回弹缓动 */
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+<div class="box" id="box"></div>
+
+<script>
+const box = document.getElementById('box')
+let timer = null
+let scale = 1 // 初始缩放值
+
+// 鼠标按住
+box.addEventListener('mousedown',()=>{
+  clearInterval(timer)
+  // 持续不断放大
+  timer = setInterval(()=>{
+    if(scale < 1.6){ // 最大限制
+      scale += 0.02
+      box.style.transform = `scale(${scale})`
+    }
+  },30)
+})
+
+// 鼠标松开 / 移出
+function reset(){
+  clearInterval(timer)
+  scale = 1 // 重置数值
+  box.style.transform = 'scale(1)'
+}
+box.addEventListener('mouseup',reset)
+box.addEventListener('mouseleave',reset)
+</script>
+</body>
+</html>
