@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import type { FrameData } from '../composables/useVideoFrames'
-import { getCurrentInstance, ref } from 'vue'
+import { getCurrentInstance, ref, computed } from 'vue'
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
+
+// 导入轮播组件
+import ImgCarousel from './ImgCarousel.vue'
 
 // 开发环境挂载实例
 if (import.meta.env.DEV) {
@@ -12,6 +15,11 @@ if (import.meta.env.DEV) {
 const props = defineProps<{
   frames: FrameData[]
 }>()
+
+// 计算属性：自动把帧转成图片列表传给轮播
+const imgList = computed(() => {
+  return props.frames.map(item => item.dataUrl)
+})
 
 // 预览弹窗控制
 const previewVisible = ref(false)
@@ -37,15 +45,12 @@ const downloadSingle = (frame: FrameData) => {
   link.click()
 }
 
-// ==============================================
-// 👇 一键下载所有图片 → 打包成 ZIP
-// ==============================================
+// 一键下载所有图片 → 打包成 ZIP
 const downloadAllAsZip = async () => {
   const zip = new JSZip()
   const folder = zip.folder('视频帧图片')
 
   props.frames.forEach((frame) => {
-    // 去掉 base64 前缀 data:image/jpeg;base64,
     const base64Data = frame.dataUrl.split(',')[1]
     folder?.file(
         `frame_${frame.index}_${frame.timestamp.toFixed(2)}s.jpg`,
@@ -54,7 +59,6 @@ const downloadAllAsZip = async () => {
     )
   })
 
-  // 生成并下载zip
   const content = await zip.generateAsync({ type: 'blob' })
   saveAs(content, `视频帧_${new Date().getTime()}.zip`)
 }
@@ -73,13 +77,16 @@ const downloadAllAsZip = async () => {
       ✨ 一键下载全部帧（压缩包）
     </button>
 
+    <!-- 👇 图片轮播（自动使用当前生成的帧） -->
+    <ImgCarousel v-if="imgList.length > 0" :img-list="imgList" />
+
+    <!-- 帧列表 -->
     <div class="frames-grid">
       <div
           v-for="frame in frames"
           :key="frame.index"
           class="frame-card"
       >
-        <!-- 点击 → 打开预览（不直接下载）-->
         <img
             :src="frame.dataUrl"
             :alt="'Frame ' + frame.index"
@@ -94,7 +101,7 @@ const downloadAllAsZip = async () => {
       </div>
     </div>
 
-    <!-- 大图预览弹窗 -->
+    <!-- 预览弹窗 -->
     <div v-if="previewVisible" class="preview-modal" @click.self="closePreview">
       <div class="preview-content">
         <button class="preview-close" @click="closePreview">×</button>
@@ -142,12 +149,10 @@ const downloadAllAsZip = async () => {
   overflow: hidden;
   background: var(--code-bg);
 }
-
 .frame-img {
   width: 100%;
   display: block;
 }
-
 .frame-info {
   display: flex;
   justify-content: space-between;
@@ -156,7 +161,6 @@ const downloadAllAsZip = async () => {
   color: var(--text);
 }
 
-/* 预览弹窗 */
 .preview-modal {
   position: fixed;
   top: 0;
