@@ -11,6 +11,7 @@ const { frames, extracting, extractProgress, extract } = useVideoFrames()
 const videoEl = ref<HTMLVideoElement | null>(null)
 const fps = ref(1)
 
+import defaultVideo from './video/example.mp4'
 
 // 页面加载后，自动加载演示视频
 onMounted(async () => {
@@ -18,10 +19,10 @@ onMounted(async () => {
   // 这里填写你的演示视频路径（public 目录下的直接路径）
   try {
     // 1. 你的默认视频路径（public 目录下）
-    const defaultVideoUrl = 'public/video/example.mp4'
+    // const defaultVideoUrl = 'public/video/example.mp4'
 
     // 2. 下载视频 → 转成 Blob → 转成 File
-    const response = await fetch(defaultVideoUrl)
+    const response = await fetch(defaultVideo)
     const blob = await response.blob()
     const file = new File([blob], 'example.mp4', { type: blob.type })
 
