@@ -1,5 +1,20 @@
-# Vue 3 + TypeScript + Vite
+# 操作说明
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+首先你得有个物品图片，例如:
+![图1.png](public/doc/img/%E5%9B%BE1.png)
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+然后扔给图生图模型，给出提示词（最好根据自己的图片让大模型优化一下提示此）
+```text
+    M4A1突击步枪，产品爆炸视图，所有零件按结构关系悬浮拆解，居中对齐，从光学瞄准镜、枪管、护木、垂直握把、弹匣、枪托、枪身机匣、扳机组件、准星、消焰器等所有组件清晰可见，纯白背景，工业级产品渲染，写实摄影，8K高清，细节锐利，光线均匀，无阴影，电商产品图风格，干净无多余元素
+```
+
+得到爆炸视图
+![图2.jpeg](public/doc/img/%E5%9B%BE2.jpeg)
+
+接着把这两张图送到图生视频平台上，按照首位帧生视频方式，给出提示词
+
+你就能得到该视频
+
+然后从网页里进行调入后，可以生成多帧轮播的效果
+
+over
