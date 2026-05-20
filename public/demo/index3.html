@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>public视频下载测试</title>
+  <style>
+    .btn {
+      padding: 10px 20px;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin: 10px;
+    }
+    .btn:hover {
+      background: #1d4ed8;
+    }
+  </style>
+</head>
+<body>
+  <h3>测试下载 public 下的视频</h3>
+
+  <!-- 方式1：a标签直接下载（最简） -->
+  <a href="../video/example.mp4" download="示例视频.mp4" class="btn">
+    A标签直接下载
+  </a>
+
+  <!-- 方式2：JS按钮下载 -->
+  <button class="btn" onclick="downVideo()">JS按钮下载视频</button>
+
+  <script>
+    function downVideo() {
+      // 核心路径：public/video/example.mp4 对应 /video/example.mp4
+      const videoUrl = '../video/example.mp4'
+      const a = document.createElement('a')
+      a.href = videoUrl
+      a.download = '示例视频.mp4'
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+    }
+  </script>
+</body>
+</html>

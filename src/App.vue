@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, onMounted} from 'vue'
+import { ref, onMounted } from 'vue'
 import { useVideoUpload } from './composables/useVideoUpload'
 import { useVideoFrames } from './composables/useVideoFrames'
 import ExtractControls from './components/ExtractControls.vue'
@@ -11,7 +11,6 @@ const { frames, extracting, extractProgress, extract } = useVideoFrames()
 const videoEl = ref<HTMLVideoElement | null>(null)
 const fps = ref(1)
 
-import defaultVideo from './video/example.mp4'
 
 // 页面加载后，自动加载演示视频
 onMounted(async () => {
@@ -19,25 +18,31 @@ onMounted(async () => {
   // 这里填写你的演示视频路径（public 目录下的直接路径）
   try {
     // 1. 你的默认视频路径（public 目录下）
-    // const defaultVideoUrl = 'public/video/example.mp4'
+    const defaultVideoUrl = '/video/example.mp4'
 
     // 2. 下载视频 → 转成 Blob → 转成 File
-    const response = await fetch(defaultVideo)
+    const response = await fetch(defaultVideoUrl)
     const blob = await response.blob()
     const file = new File([blob], 'example.mp4', { type: blob.type })
 
-    // 3. 直接调用你原来的 upload 方法！
     upload(file)
   } catch (err) {
     console.error('加载默认视频失败', err)
   }
-
-
-
 })
 
+// ✅ 新增：下载默认视频方法
+function downloadDefaultVideo() {
+  const a = document.createElement('a')
+  a.href = '/video/example.mp4'
+  a.download = 'example.mp4'
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+}
+
 function handleFileChange(event: Event) {
-  console.log("上传按钮",event)
+  console.log("上传按钮", event)
   const file = (event.target as HTMLInputElement).files?.[0]
   if (file) upload(file)
 }
@@ -60,6 +65,12 @@ async function handleExtract() {
         选择视频文件
         <input type="file" accept="video/*" hidden @change="handleFileChange" />
       </label>
+
+      <!-- ✅ 新增：下载示例视频按钮 -->
+      <button class="download-btn" @click="downloadDefaultVideo">
+        下载示例视频
+      </button>
+
       <span v-if="fileName" class="file-name">{{ fileName }}</span>
     </section>
 
@@ -121,6 +132,22 @@ header h1 {
 }
 
 .upload-btn:hover {
+  opacity: 0.85;
+}
+
+/* ✅ 新增：下载按钮样式 */
+.download-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #1677ff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: opacity 0.2s;
+}
+.download-btn:hover {
   opacity: 0.85;
 }
 
