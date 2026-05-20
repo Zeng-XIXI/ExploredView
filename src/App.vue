@@ -11,10 +11,6 @@ const { frames, extracting, extractProgress, extract } = useVideoFrames()
 const videoEl = ref<HTMLVideoElement | null>(null)
 const fps = ref(1)
 
-if (import.meta.env.DEV) {
-  // 挂载当前完整组件实例，自定义全局变量名避免冲突
-  window.__VUE_INSTANCE__ = getCurrentInstance()
-}
 
 // 页面加载后，自动加载演示视频
 onMounted(async () => {
