@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, onMounted, getCurrentInstance} from 'vue'
+import {ref, onMounted} from 'vue'
 import { useVideoUpload } from './composables/useVideoUpload'
 import { useVideoFrames } from './composables/useVideoFrames'
 import ExtractControls from './components/ExtractControls.vue'
