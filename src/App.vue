@@ -15,6 +15,7 @@ const fps = ref(1)
 // 页面加载后，自动加载演示视频
 onMounted(async () => {
   console.log("start")
+  disableMenu();
   // 这里填写你的演示视频路径（public 目录下的直接路径）
   try {
     // 1. 你的默认视频路径（public 目录下）
@@ -30,6 +31,13 @@ onMounted(async () => {
     console.error('加载默认视频失败', err)
   }
 })
+function disableMenu(){
+  document.addEventListener('contextmenu', e => {
+    e.preventDefault();
+    console.log('禁止使用菜单')
+    return false;
+  });
+}
 
 // ✅ 新增：下载默认视频方法
 function downloadDefaultVideo() {
