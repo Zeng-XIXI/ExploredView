@@ -16,7 +16,6 @@
     <div class="img-wrap" style="position:relative;"
          @mousedown="handleDown" @mouseup="handleUp" @mouseleave="handleUp"
          @touchstart="handleDown" @touchend="handleUp"  @touchmove="handleUp">
-      <div style="width: 100%;height: 100%;position: absolute;top:0;left: 0;border: 1px solid red;background: rgba(29,78,216,0.3)"></div>
       <img :src="currentImg" alt="轮播" class="show-img" />
     </div>
   </div>
@@ -79,9 +78,7 @@ const clearAllTimer = () => {
 onUnmounted(clearAllTimer)
 </script>
 
-<style>
-/* 这个样式是全局的，不会加 data-v 前缀，IDE 也不会报错 */
-</style>
+
 
 <style scoped>
 .carousel-box {
@@ -136,6 +133,13 @@ onUnmounted(clearAllTimer)
   cursor: grab;
   overflow: hidden;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+:deep(.img-wrap),
+:deep(.img-wrap *) {
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 .show-img {
